@@ -1,5 +1,6 @@
 ﻿using CommandParsonaut.Core.Types;
 using CommandParsonaut.Interfaces;
+using System;
 
 namespace CommandParsonaut.CommandHewAwayTool
 {
@@ -140,6 +141,7 @@ namespace CommandParsonaut.CommandHewAwayTool
                         succ = InputParser.ParseInteger(tokenToRule.Token, out intResult);
                         tempResults.Add(new ParameterResult(intResult));
                         break;
+
                     case ParameterType.IntegerRange:
                         int intInRangeResult;
                         succ = InputParser.ParseIntegerInRange(tokenToRule.Token, command.Ranges[indices.rangeIndex].min, command.Ranges[indices.rangeIndex].max, out intInRangeResult);
@@ -147,20 +149,33 @@ namespace CommandParsonaut.CommandHewAwayTool
                         additionalErrorMessage = $"Expected value in range <{command.Ranges[indices.rangeIndex].min}, {command.Ranges[indices.rangeIndex].max}>!";
                         indices.rangeIndex++;
                         break;
+
                     case ParameterType.Double:
                         double doubleResult;
                         succ = InputParser.ParseDouble(tokenToRule.Token, out doubleResult);
                         tempResults.Add(new ParameterResult(doubleResult));
                         break;
+
                     case ParameterType.String:
                         tempResults.Add(new ParameterResult(tokenToRule.Token));
                         break;
+
                     case ParameterType.Enum:
                         succ = command.Enums[indices.enumIndex].Contains(tokenToRule.Token);
                         tempResults.Add(new ParameterResult(tokenToRule.Token));
                         additionalErrorMessage = $"Expected value from [{string.Join(", ", command.Enums[indices.enumIndex])}]!";
                         indices.enumIndex++;
                         break;
+
+                    case ParameterType.Uri:
+                        Uri? uriResult;
+                        succ = Uri.TryCreate(tokenToRule.Token, UriKind.Absolute, out uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+                        if (uriResult != null)
+                        {
+                            tempResults.Add(new ParameterResult((Uri)uriResult));
+                        }
+                        break;
+
                     default:
                         break;
                 }

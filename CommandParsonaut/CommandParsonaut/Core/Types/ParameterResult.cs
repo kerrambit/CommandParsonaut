@@ -10,6 +10,7 @@
         public double Double { get; } = 0.0;
         public string String { get; } = string.Empty;
         public string Enum { get; } = string.Empty;
+        public Uri Uri { get; } = new("https://github.com/kerrambit/CommandParsonaut");
 
         private (bool isAvailable, ParameterType Type) _availableType = (false, ParameterType.Integer);
 
@@ -37,6 +38,12 @@
                 String = param;
                 _availableType = (true, ParameterType.String);
             }
+        }
+
+        public ParameterResult (Uri uri)
+        {
+            Uri = uri;
+            _availableType = (true, ParameterType.Uri);
         }
 
         public bool CheckResultAvailability(ParameterType targetType)

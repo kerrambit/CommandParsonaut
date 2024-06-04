@@ -38,6 +38,9 @@ namespace RSSFeedifyCLIClient
                             writer.RenderBareText($"Entered command: <{unprocessedInput}>");
                             writer.RenderBareText($"Sum: {HandleSumCommand(parameters)}");
                             break;
+                        case "url":
+                            writer.RenderBareText($"Entered command: <{unprocessedInput}>");
+                            break;
                         default:
                             break;
                     }

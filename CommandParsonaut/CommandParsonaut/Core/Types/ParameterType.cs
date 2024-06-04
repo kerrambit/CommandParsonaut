@@ -9,6 +9,7 @@
         IntegerRange,
         Double,
         String,
-        Enum
+        Enum,
+        Uri
     }
 }
