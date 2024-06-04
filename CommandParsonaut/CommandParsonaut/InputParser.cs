@@ -73,6 +73,16 @@ namespace CommandParsonaut
             return true;
         }
 
+        public static bool ParseDoubleInRange(in string token, double min, double max, out double result)
+        {
+            if (!double.TryParse(token, out result))
+            {
+                return false;
+            }
+
+            return result >= min && result <= max;
+        }
+
         public static bool ParsePositiveInteger(in string token, out int result)
         {
             if (ParseInteger(token, out result))

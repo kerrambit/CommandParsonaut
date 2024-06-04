@@ -127,7 +127,7 @@ namespace CommandParsonaut.CommandHewAwayTool
             tokens = tokens[1..];
             var mappedTokensToRules = tokens.Zip(command.Parameters, (token, rule) => new { Token = token, Rule = rule });
 
-            (int index, int rangeIndex, int enumIndex) indices = (0, 0, 0);
+            (int index, int integerRangeIndex, int doubleRangeIndex, int enumIndex) indices = (0, 0, 0, 0);
             List<ParameterResult> tempResults = new List<ParameterResult>();
             foreach (var tokenToRule in mappedTokensToRules)
             {
@@ -144,16 +144,24 @@ namespace CommandParsonaut.CommandHewAwayTool
 
                     case ParameterType.IntegerRange:
                         int intInRangeResult;
-                        succ = InputParser.ParseIntegerInRange(tokenToRule.Token, command.Ranges[indices.rangeIndex].min, command.Ranges[indices.rangeIndex].max, out intInRangeResult);
+                        succ = InputParser.ParseIntegerInRange(tokenToRule.Token, command.IntegerRanges[indices.integerRangeIndex].min, command.IntegerRanges[indices.integerRangeIndex].max, out intInRangeResult);
                         tempResults.Add(new ParameterResult(intInRangeResult));
-                        additionalErrorMessage = $"Expected value in range <{command.Ranges[indices.rangeIndex].min}, {command.Ranges[indices.rangeIndex].max}>!";
-                        indices.rangeIndex++;
+                        additionalErrorMessage = $"Expected value in range <{command.IntegerRanges[indices.integerRangeIndex].min}, {command.IntegerRanges[indices.integerRangeIndex].max}>!";
+                        indices.integerRangeIndex++;
                         break;
 
                     case ParameterType.Double:
                         double doubleResult;
                         succ = InputParser.ParseDouble(tokenToRule.Token, out doubleResult);
                         tempResults.Add(new ParameterResult(doubleResult));
+                        break;
+
+                    case ParameterType.DoubleRange:
+                        double doubleInRangeResult;
+                        succ = InputParser.ParseDoubleInRange(tokenToRule.Token, command.DoubleRanges[indices.doubleRangeIndex].min, command.DoubleRanges[indices.doubleRangeIndex].max, out doubleInRangeResult);
+                        tempResults.Add(new ParameterResult(doubleInRangeResult));
+                        additionalErrorMessage = $"Expected value in range <{command.DoubleRanges[indices.doubleRangeIndex].min}, {command.DoubleRanges[indices.doubleRangeIndex].max}>!";
+                        indices.doubleRangeIndex++;
                         break;
 
                     case ParameterType.String:

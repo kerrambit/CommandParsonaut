@@ -34,9 +34,13 @@ namespace RSSFeedifyCLIClient
                         case "quit":
                             appRunning = false;
                             break;
-                        case "sum":
+                        case "integers-range":
                             writer.RenderBareText($"Entered command: <{unprocessedInput}>");
-                            writer.RenderBareText($"Sum: {HandleSumCommand(parameters)}");
+                            writer.RenderBareText($"Sum: {HandleIntegerSumCommand(parameters)}");
+                            break;
+                        case "doubles-range":
+                            writer.RenderBareText($"Entered command: <{unprocessedInput}>");
+                            writer.RenderBareText($"Sum: {HandleDoubleSumCommand(parameters)}");
                             break;
                         case "url":
                             writer.RenderBareText($"Entered command: <{unprocessedInput}>");
@@ -48,12 +52,23 @@ namespace RSSFeedifyCLIClient
             }
         }
 
-        private static int HandleSumCommand(IList<ParameterResult> parameters)
+        private static int HandleIntegerSumCommand(IList<ParameterResult> parameters)
         {
             int sum = 0;
             foreach (ParameterResult parameterResult in parameters)
             {
                 sum += parameterResult.Integer;
+            }
+
+            return sum;
+        }
+
+        private static double HandleDoubleSumCommand(IList<ParameterResult> parameters)
+        {
+            double sum = 0.0;
+            foreach (ParameterResult parameterResult in parameters)
+            {
+                sum += parameterResult.Double;
             }
 
             return sum;

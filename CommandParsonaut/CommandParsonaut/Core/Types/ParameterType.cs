@@ -8,6 +8,7 @@
         Integer,
         IntegerRange,
         Double,
+        DoubleRange,
         String,
         Enum,
         Uri

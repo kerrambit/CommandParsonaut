@@ -10,7 +10,8 @@
         public string Description { get; } = string.Empty;
         public IList<ParameterType> Parameters { get; } = new List<ParameterType>();
         public IList<IList<string>> Enums { get; } = new List<IList<string>>();
-        public IList<(int min, int max)> Ranges { get; } = new List<(int, int)>();
+        public IList<(int min, int max)> IntegerRanges { get; } = new List<(int, int)>();
+        public IList<(double min, double max)> DoubleRanges { get; } = new List<(double, double)>();
 
         public Command() { }
 
@@ -22,13 +23,22 @@
             Parameters = parameters;
         }
 
-        public Command(string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<(int min, int max)> ranges)
+        public Command(string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<(int min, int max)> integerRanges)
         {
             Name = name;
             ParametersInStrinFormat = parametersInStringFormat;
             Description = description;
             Parameters = parameters;
-            Ranges = ranges;
+            IntegerRanges = integerRanges;
+        }
+
+        public Command(string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<(double min, double max)> doubleRanges)
+        {
+            Name = name;
+            ParametersInStrinFormat = parametersInStringFormat;
+            Description = description;
+            Parameters = parameters;
+            DoubleRanges = doubleRanges;
         }
 
         public Command(string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<IList<string>> enums)
@@ -40,13 +50,13 @@
             Enums = enums;
         }
 
-        public Command(string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<(int min, int max)> ranges, IList<IList<string>> enums)
+        public Command(string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<(int min, int max)> integerRanges, IList<IList<string>> enums)
         {
             Name = name;
             ParametersInStrinFormat = parametersInStringFormat;
             Description = description;
             Parameters = parameters;
-            Ranges = ranges;
+            IntegerRanges = integerRanges;
             Enums = enums;
         }
     }
