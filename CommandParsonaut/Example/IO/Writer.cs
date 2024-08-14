@@ -41,5 +41,10 @@ namespace RSSFeedifyCLIClient.IO
             else
                 Console.Write(message);
         }
+
+        public void ClearTerminal()
+        {
+            Console.Clear();
+        }
     }
 }

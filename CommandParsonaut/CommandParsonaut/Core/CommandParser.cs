@@ -1,6 +1,8 @@
 ﻿using CommandParsonaut.Core.Types;
 using CommandParsonaut.Interfaces;
+using CommandParsonaut.OtherToolkit;
 using System;
+using System.Text;
 
 namespace CommandParsonaut.CommandHewAwayTool
 {
@@ -14,6 +16,8 @@ namespace CommandParsonaut.CommandHewAwayTool
         private IReader _reader;
         private List<Command> _commands = new List<Command>();
         private int _maxCommandArgumentLength = 0;
+        private IList<string> _commandsHistory = new List<string>();
+        private int _currentCommandsHistoryOffset = -1;
 
         public event EventHandler<string>? InputGiven;
 
@@ -40,17 +44,80 @@ namespace CommandParsonaut.CommandHewAwayTool
             }
         }
 
+        private void ReplaceCurrentLineWithCommand(StringBuilder builder, string commandFromHistory)
+        {
+            TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, builder.Length);
+            builder.Length = 0;
+            builder.Append(commandFromHistory);
+            _writer.RenderBareText(commandFromHistory, newLine: false);
+        }
+
         public bool GetUnprocessedInput(out string input)
         {
-            string? rawInput = _reader.ReadLine();
-            if (rawInput == null)
-            {
-                input = string.Empty;
-                return false;
-            }
+            var builder = new StringBuilder();
 
-            input = rawInput;
-            return true;
+            while (true)
+            {
+                if (_reader.IsAnyKeyAvailable())
+                {
+                    // Handle special commands, such as CTRL+L. TODO: this will not be hardcoded, basically there will be ADirective, from which
+                    // will inherit Command and KeyCombination. Command will read line, KeyCombination which replace current solution.
+                    var key = _reader.ReadSecretKey();
+
+                    if (key.Modifiers == ConsoleModifiers.Control && key.Key == ConsoleKey.L)
+                    {
+                        _writer.ClearTerminal();
+                        RenderTerminalPrompt();
+                    } else if (key.Key == ConsoleKey.UpArrow)
+                    {
+                        if (_currentCommandsHistoryOffset > 0 && _currentCommandsHistoryOffset <= _commandsHistory.Count)
+                        {
+                            _currentCommandsHistoryOffset--;
+                            string commandFromHistory = _commandsHistory[_currentCommandsHistoryOffset];
+                            ReplaceCurrentLineWithCommand(builder, commandFromHistory);
+                        }
+                    } else if (key.Key == ConsoleKey.DownArrow)
+                    {
+                        if (_currentCommandsHistoryOffset >= 0)
+                        {
+                            if (_currentCommandsHistoryOffset >= _commandsHistory.Count - 1)
+                            {
+                                TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, builder.Length);
+                                builder.Length = 0;
+                                _currentCommandsHistoryOffset = _commandsHistory.Count;
+                            }
+                            else
+                            {
+                                _currentCommandsHistoryOffset++;
+                                string commandFromHistory = _commandsHistory[_currentCommandsHistoryOffset];
+                                ReplaceCurrentLineWithCommand(builder, commandFromHistory);
+                            }
+                        }
+                    } else if (key.Key == ConsoleKey.Backspace)
+                    {
+                        TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, leftIndent: 4);
+                        if (builder.Length > 0)
+                        {
+                            builder.Length--;
+                        }
+                    }
+                    else if (key.Key == ConsoleKey.Enter)
+                    {
+                        input = builder.ToString();
+                        _writer.RenderBareText("");
+                        if (input.Length > 0)
+                        {
+                            _commandsHistory.Add(input);
+                            _currentCommandsHistoryOffset = _commandsHistory.Count;
+                        }
+                        return true;
+                    } else
+                    {
+                        builder.Append(key.KeyChar);
+                        _writer.RenderBareText(key.KeyChar.ToString(), newLine: false);
+                    }
+                }
+            }
         }
 
         public bool GetCommand(out Command receivedCommand, out IList<ParameterResult> results, out string unprocessedInput)

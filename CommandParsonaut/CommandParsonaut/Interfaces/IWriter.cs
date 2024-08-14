@@ -7,6 +7,7 @@
     {
         string Name { get; set; }
 
+        void ClearTerminal();
         void RenderBareText(in string message, bool newLine = true);
         void RenderDebugMessage(in string message);
         void RenderErrorMessage(in string message);

@@ -11,5 +11,7 @@ namespace CommandParsonaut.Interfaces
         ConsoleKeyInfo ReadSecretKey();
         void CursorLeft();
         void CursorRight();
+        bool IsAnyKeyAvailable();
+        int GetCursorLeftPosition();
     }
 }

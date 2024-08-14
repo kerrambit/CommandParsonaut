@@ -31,9 +31,7 @@ namespace CommandParsonaut.OtherToolkit
                 {
                     password = password.Remove(password.Length - 1);
 
-                    _reader.CursorLeft();
-                    _writer.RenderBareText(" ", newLine: false);
-                    _reader.CursorLeft();
+                    TerminalBasicAbilities.ExecuteBackspace(_reader, _writer);
                 }
 
             } while (key.Key != ConsoleKey.Enter);

@@ -31,5 +31,15 @@ namespace RSSFeedifyCLIClient.IO
         {
             return Console.ReadLine();
         }
+
+        public bool IsAnyKeyAvailable()
+        {   
+            return Console.KeyAvailable;
+        }
+
+        public int GetCursorLeftPosition()
+        {
+            return Console.CursorLeft;
+        }
     }
 }
