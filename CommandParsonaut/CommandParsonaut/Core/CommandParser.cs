@@ -42,8 +42,6 @@ namespace CommandParsonaut.CommandHewAwayTool
 
         public bool GetUnprocessedInput(out string input)
         {
-            RenderTerminalPrompt();
-
             string? rawInput = _reader.ReadLine();
             if (rawInput == null)
             {
@@ -57,6 +55,8 @@ namespace CommandParsonaut.CommandHewAwayTool
 
         public bool GetCommand(out Command receivedCommand, out IList<ParameterResult> results, out string unprocessedInput)
         {
+            RenderTerminalPrompt();
+
             string input;
             if (!GetUnprocessedInput(out input))
             {
