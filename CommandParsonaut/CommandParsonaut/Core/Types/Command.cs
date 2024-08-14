@@ -15,6 +15,13 @@
 
         public Command() { }
 
+        public Command(string name, string parametersInStringFormat, string description)
+        {
+            Name = name;
+            ParametersInStrinFormat = parametersInStringFormat;
+            Description = description;
+        }
+
         public Command(string name, string parametersInStringFormat, string description, IList<ParameterType> parameters)
         {
             Name = name;

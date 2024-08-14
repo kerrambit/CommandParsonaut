@@ -8,6 +8,7 @@ namespace CommandParsonaut.Interfaces
     {
         string? ReadLine();
         ConsoleKeyInfo ReadKey();
+        ConsoleKeyInfo ReadSecretKey();
         void CursorLeft();
         void CursorRight();
     }

@@ -15,12 +15,14 @@ namespace RSSFeedifyCLIClient.Repository
             Command url = new Command("url", "url:URI", "Enter valid URL.", new List<ParameterType> { ParameterType.Uri });
             Command sumDoubles = new Command("doubles-range", "a:DOUBLE b:DOUBLE", "Sums three doubles (a is from <-49.5, 89.5> and b is from <0, 1005.05>).", new List<ParameterType>() { ParameterType.DoubleRange, ParameterType.DoubleRange }, new List<(double, double)> { (-49.5, 89.5), (0, 1005.05) });
             Command email = new Command("email", "email:EMAIL", "Enter valid email.", new List<ParameterType>() { ParameterType.Email });
+            Command password = new Command("password", "", "Will run password reader.");
             Command quit = new Command("quit", "", "Quits the application.", new List<ParameterType> { });
 
             commands["integers-range"] = sumIntegers;
             commands["doubles-range"] = sumDoubles;
             commands["url"] = url;
             commands["email"] = email;
+            commands["password"] = password;
             commands["quit"] = quit;
 
             return commands;

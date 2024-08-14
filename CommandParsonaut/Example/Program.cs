@@ -1,6 +1,7 @@
 ﻿using CommandParsonaut.CommandHewAwayTool;
 using CommandParsonaut.Core.Types;
 using CommandParsonaut.Interfaces;
+using CommandParsonaut.OtherToolkit;
 using RSSFeedifyCLIClient.IO;
 using RSSFeedifyCLIClient.Repository;
 
@@ -47,6 +48,12 @@ namespace RSSFeedifyCLIClient
                             break;
                         case "email":
                             writer.RenderBareText($"Entered command: <{unprocessedInput}>");
+                            break;
+                        case "password":
+                            PasswordReader passwordReader = new(reader, writer);
+                            writer.RenderBareText($"Please, enter the password: ", newLine: false);
+                            string password = passwordReader.ReadPassword();
+                            writer.RenderBareText($"You have entered the password: {password}");
                             break;
                         default:
                             break;

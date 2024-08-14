@@ -22,6 +22,11 @@ namespace RSSFeedifyCLIClient.IO
             return Console.ReadKey();
         }
 
+        public ConsoleKeyInfo ReadSecretKey()
+        {
+            return Console.ReadKey(intercept: true);
+        }
+
         public string? ReadLine()
         {
             return Console.ReadLine();
