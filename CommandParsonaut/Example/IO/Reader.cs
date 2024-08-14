@@ -7,6 +7,11 @@ namespace RSSFeedifyCLIClient.IO
     /// </summary>
     public class Reader : IReader
     {
+        public ConsoleKeyInfo ReadKey()
+        {
+            return Console.ReadKey();
+        }
+
         public string? ReadLine()
         {
             return Console.ReadLine();

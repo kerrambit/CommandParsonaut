@@ -7,5 +7,6 @@ namespace CommandParsonaut.Interfaces
     public interface IReader
     {
         string? ReadLine();
+        ConsoleKeyInfo ReadKey();
     }
 }
