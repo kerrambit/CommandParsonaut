@@ -1,7 +1,6 @@
 ﻿using CommandParsonaut.Core.Types;
 using CommandParsonaut.Interfaces;
 using CommandParsonaut.OtherToolkit;
-using System;
 using System.Text;
 
 namespace CommandParsonaut.CommandHewAwayTool
@@ -20,6 +19,7 @@ namespace CommandParsonaut.CommandHewAwayTool
         private int _currentCommandsHistoryOffset = -1;
 
         public event EventHandler<string>? InputGiven;
+        public readonly string TerminalPromt = ">>> ";
 
         public CommandParser(IWriter writer, IReader reader)
         {
@@ -68,7 +68,8 @@ namespace CommandParsonaut.CommandHewAwayTool
                     {
                         _writer.ClearTerminal();
                         RenderTerminalPrompt();
-                    } else if (key.Key == ConsoleKey.UpArrow)
+                    }
+                    else if (key.Key == ConsoleKey.UpArrow)
                     {
                         if (_currentCommandsHistoryOffset > 0 && _currentCommandsHistoryOffset <= _commandsHistory.Count)
                         {
@@ -76,7 +77,8 @@ namespace CommandParsonaut.CommandHewAwayTool
                             string commandFromHistory = _commandsHistory[_currentCommandsHistoryOffset];
                             ReplaceCurrentLineWithCommand(builder, commandFromHistory);
                         }
-                    } else if (key.Key == ConsoleKey.DownArrow)
+                    }
+                    else if (key.Key == ConsoleKey.DownArrow)
                     {
                         if (_currentCommandsHistoryOffset >= 0)
                         {
@@ -93,9 +95,10 @@ namespace CommandParsonaut.CommandHewAwayTool
                                 ReplaceCurrentLineWithCommand(builder, commandFromHistory);
                             }
                         }
-                    } else if (key.Key == ConsoleKey.Backspace)
+                    }
+                    else if (key.Key == ConsoleKey.Backspace)
                     {
-                        TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, leftIndent: 4);
+                        TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, leftIndent: TerminalPromt.Length);
                         if (builder.Length > 0)
                         {
                             builder.Length--;
@@ -111,7 +114,8 @@ namespace CommandParsonaut.CommandHewAwayTool
                             _currentCommandsHistoryOffset = _commandsHistory.Count;
                         }
                         return true;
-                    } else
+                    }
+                    else
                     {
                         builder.Append(key.KeyChar);
                         _writer.RenderBareText(key.KeyChar.ToString(), newLine: false);
@@ -310,7 +314,7 @@ namespace CommandParsonaut.CommandHewAwayTool
 
         private void RenderTerminalPrompt()
         {
-            _writer.RenderBareText($">>> ", false);
+            _writer.RenderBareText(TerminalPromt, false);
         }
     }
 }

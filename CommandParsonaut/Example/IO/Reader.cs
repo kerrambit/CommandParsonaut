@@ -33,7 +33,7 @@ namespace RSSFeedifyCLIClient.IO
         }
 
         public bool IsAnyKeyAvailable()
-        {   
+        {
             return Console.KeyAvailable;
         }
 
