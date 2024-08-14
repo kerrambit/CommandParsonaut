@@ -11,8 +11,19 @@
         public string String { get; } = string.Empty;
         public string Enum { get; } = string.Empty;
         public Uri Uri { get; } = new("https://github.com/kerrambit/CommandParsonaut");
+        public string Email { get; } = string.Empty;
 
         private (bool isAvailable, ParameterType Type) _availableType = (false, ParameterType.Integer);
+
+        public struct EmailParameterResultArgument
+        {
+            public string Value;
+
+            public EmailParameterResultArgument(string email)
+            {
+                Value = email;
+            }
+        }
 
         public ParameterResult(int param)
         {
@@ -40,10 +51,16 @@
             }
         }
 
-        public ParameterResult (Uri uri)
+        public ParameterResult(Uri uri)
         {
             Uri = uri;
             _availableType = (true, ParameterType.Uri);
+        }
+
+        public ParameterResult(EmailParameterResultArgument email)
+        {
+            Email = email.Value;
+            _availableType = (true, ParameterType.Email);
         }
 
         public bool CheckResultAvailability(ParameterType targetType)

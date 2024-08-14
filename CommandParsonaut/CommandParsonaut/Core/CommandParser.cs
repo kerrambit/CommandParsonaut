@@ -184,6 +184,15 @@ namespace CommandParsonaut.CommandHewAwayTool
                         }
                         break;
 
+                    case ParameterType.Email:
+                        string emailResult;
+                        succ = InputParser.ParseEmail(tokenToRule.Token, out emailResult);
+                        if (succ)
+                        {
+                            tempResults.Add(new ParameterResult(new ParameterResult.EmailParameterResultArgument(emailResult)));
+                        }
+                        break;
+
                     default:
                         break;
                 }

@@ -45,6 +45,9 @@ namespace RSSFeedifyCLIClient
                         case "url":
                             writer.RenderBareText($"Entered command: <{unprocessedInput}>");
                             break;
+                        case "email":
+                            writer.RenderBareText($"Entered command: <{unprocessedInput}>");
+                            break;
                         default:
                             break;
                     }

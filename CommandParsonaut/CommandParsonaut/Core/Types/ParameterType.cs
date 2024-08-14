@@ -11,6 +11,7 @@
         DoubleRange,
         String,
         Enum,
-        Uri
+        Uri,
+        Email
     }
 }
