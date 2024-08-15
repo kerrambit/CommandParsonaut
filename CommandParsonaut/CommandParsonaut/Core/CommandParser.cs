@@ -3,7 +3,7 @@ using CommandParsonaut.Interfaces;
 using CommandParsonaut.OtherToolkit;
 using System.Text;
 
-namespace CommandParsonaut.CommandHewAwayTool
+namespace CommandParsonaut.Core
 {
     /// <summary>
     /// Stores all commands. If asked, it reads data from standart input and can check if any commands is equal and checks and parses also the parameters.
