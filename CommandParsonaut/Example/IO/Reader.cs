@@ -3,7 +3,7 @@
 namespace RSSFeedifyCLIClient.IO
 {
     /// <summary>
-    /// Implements CommandHewAwayTool IReader interface.
+    /// Implements CommandParsonaut IReader interface.
     /// </summary>
     public class Reader : IReader
     {

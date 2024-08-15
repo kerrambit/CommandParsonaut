@@ -3,7 +3,7 @@ using CommandParsonaut.Interfaces;
 using CommandParsonaut.OtherToolkit;
 using System.Text;
 
-namespace CommandParsonaut.CommandHewAwayTool
+namespace CommandParsonaut.Core
 {
     /// <summary>
     /// Stores all commands. If asked, it reads data from standart input and can check if any commands is equal and checks and parses also the parameters.
@@ -69,6 +69,14 @@ namespace CommandParsonaut.CommandHewAwayTool
                         _writer.ClearTerminal();
                         RenderTerminalPrompt();
                     }
+                    else if (key.Key == ConsoleKey.End)
+                    {
+                        TerminalBasicAbilities.ExecuteCarriageReturnBackwards(_reader, TerminalPromt.Length + builder.Length);
+                    }
+                    else if (key.Key == ConsoleKey.Home)
+                    {
+                        TerminalBasicAbilities.ExecuteCarriageReturn(_reader, TerminalPromt.Length);
+                    }
                     else if (key.Key == ConsoleKey.UpArrow)
                     {
                         if (_currentCommandsHistoryOffset > 0 && _currentCommandsHistoryOffset <= _commandsHistory.Count)
@@ -96,12 +104,24 @@ namespace CommandParsonaut.CommandHewAwayTool
                             }
                         }
                     }
+                    else if (key.Key == ConsoleKey.RightArrow)
+                    {
+                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, 1, rightIndent: builder.Length + TerminalPromt.Length);
+                    }
+                    else if (key.Key == ConsoleKey.LeftArrow)
+                    {
+                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, 1, leftIndent: TerminalPromt.Length);
+                    }
                     else if (key.Key == ConsoleKey.Backspace)
                     {
-                        TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, leftIndent: TerminalPromt.Length);
                         if (builder.Length > 0)
                         {
-                            builder.Length--;
+                            int builderOffset = _reader.GetCursorLeftPosition() - TerminalPromt.Length;
+                            TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, builder.Length - builderOffset);
+                            TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, count: builder.Length, leftIndent: TerminalPromt.Length);
+                            builder = builder.Remove(builderOffset - 1, 1);
+                            _writer.RenderBareText(builder.ToString(), newLine: false);
+                            TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, builder.Length - builderOffset + 1);
                         }
                     }
                     else if (key.Key == ConsoleKey.Enter)
@@ -117,8 +137,14 @@ namespace CommandParsonaut.CommandHewAwayTool
                     }
                     else
                     {
-                        builder.Append(key.KeyChar);
-                        _writer.RenderBareText(key.KeyChar.ToString(), newLine: false);
+                        int builderOffset = _reader.GetCursorLeftPosition() - TerminalPromt.Length;
+                        builder = builder.Insert(builderOffset, key.KeyChar);
+
+                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, builder.Length - builderOffset);
+                        TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, count: builder.Length, leftIndent: TerminalPromt.Length);
+                        _writer.RenderBareText(builder.ToString(), newLine: false);
+
+                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, builder.Length - builderOffset - 1);
                     }
                 }
             }
