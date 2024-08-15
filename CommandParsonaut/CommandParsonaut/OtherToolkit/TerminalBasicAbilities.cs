@@ -20,5 +20,36 @@ namespace CommandParsonaut.OtherToolkit
                 }
             }
         }
+
+        public enum CursorMovementDirection
+        {
+            Left,
+            Right
+        }
+
+        public static void ExecuteCursorMovemenet(IReader reader, CursorMovementDirection direction, int count = 1, int leftIndent = 0, int rightIndent = int.MaxValue)
+        {
+            for (int i = 0; i < count; i++)
+            {
+                if (reader.GetCursorLeftPosition() > leftIndent && reader.GetCursorLeftPosition() < rightIndent)
+                {
+                    switch (direction)
+                    {
+                        case CursorMovementDirection.Left:
+                            reader.CursorLeft();
+                            break;
+                        case CursorMovementDirection.Right:
+                            reader.CursorRight();
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
     }
 }

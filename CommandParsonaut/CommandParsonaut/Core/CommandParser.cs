@@ -96,6 +96,14 @@ namespace CommandParsonaut.Core
                             }
                         }
                     }
+                    else if (key.Key == ConsoleKey.RightArrow)
+                    {
+                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, 1, rightIndent: builder.Length + TerminalPromt.Length);
+                    }
+                    else if (key.Key == ConsoleKey.LeftArrow)
+                    {
+                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, 1, leftIndent: TerminalPromt.Length);
+                    }
                     else if (key.Key == ConsoleKey.Backspace)
                     {
                         TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, leftIndent: TerminalPromt.Length);
