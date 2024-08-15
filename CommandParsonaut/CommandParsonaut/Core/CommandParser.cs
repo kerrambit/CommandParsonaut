@@ -129,8 +129,14 @@ namespace CommandParsonaut.Core
                     }
                     else
                     {
-                        builder.Append(key.KeyChar);
-                        _writer.RenderBareText(key.KeyChar.ToString(), newLine: false);
+                        int builderOffset = _reader.GetCursorLeftPosition() - TerminalPromt.Length;
+                        builder = builder.Insert(builderOffset, key.KeyChar);
+
+                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, builder.Length - builderOffset);
+                        TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, count: builder.Length, leftIndent: TerminalPromt.Length);
+                        _writer.RenderBareText(builder.ToString(), newLine: false);
+
+                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, builder.Length - builderOffset - 1);
                     }
                 }
             }
