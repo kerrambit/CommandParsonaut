@@ -69,6 +69,14 @@ namespace CommandParsonaut.Core
                         _writer.ClearTerminal();
                         RenderTerminalPrompt();
                     }
+                    else if (key.Key == ConsoleKey.End)
+                    {
+                        TerminalBasicAbilities.ExecuteCarriageReturnBackwards(_reader, TerminalPromt.Length + builder.Length);
+                    }
+                    else if (key.Key == ConsoleKey.Home)
+                    {
+                        TerminalBasicAbilities.ExecuteCarriageReturn(_reader, TerminalPromt.Length);
+                    }
                     else if (key.Key == ConsoleKey.UpArrow)
                     {
                         if (_currentCommandsHistoryOffset > 0 && _currentCommandsHistoryOffset <= _commandsHistory.Count)

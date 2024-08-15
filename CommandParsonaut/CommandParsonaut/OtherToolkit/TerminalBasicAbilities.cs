@@ -1,4 +1,5 @@
 ﻿using CommandParsonaut.Interfaces;
+using System.Reflection.PortableExecutable;
 
 namespace CommandParsonaut.OtherToolkit
 {
@@ -49,6 +50,22 @@ namespace CommandParsonaut.OtherToolkit
                 {
                     break;
                 }
+            }
+        }
+
+        public static void ExecuteCarriageReturn(IReader reader, int leftIndent)
+        {
+            while (reader.GetCursorLeftPosition() > leftIndent)
+            {
+                reader.CursorLeft();
+            }
+        }
+
+        public static void ExecuteCarriageReturnBackwards(IReader reader, int rightIndent)
+        {
+            while (reader.GetCursorLeftPosition() < rightIndent)
+            {
+                reader.CursorRight();
             }
         }
     }
