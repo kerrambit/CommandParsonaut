@@ -6,12 +6,19 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Title>CommandParsonaut</Title>
-    <Description>Simple C# command parser tool.</Description>
+    <Description>Simple C# terminal &amp; commands parser tool.</Description>
     <RepositoryUrl>https://github.com/kerrambit/CommandParsonaut</RepositoryUrl>
     <Authors>kerrambit</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
+    <PackageReleaseNotes>Overview:
+
+    FIX: the main parser class was still inside the old namespace which was a relict from the old "pre-project" before CommandParsonaut called CommandHewAwayTool
+    FIX: backspacing did not work correctly, fixed
+    FEATURE: add cursor movement using Arrow RIGHT/LEFT (needed the change of key appending implementation)
+    FEATURE: add HOME/END key shortcuts
+</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
