@@ -106,10 +106,14 @@ namespace CommandParsonaut.Core
                     }
                     else if (key.Key == ConsoleKey.Backspace)
                     {
-                        TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, leftIndent: TerminalPromt.Length);
                         if (builder.Length > 0)
                         {
-                            builder.Length--;
+                            int builderOffset = _reader.GetCursorLeftPosition() - TerminalPromt.Length;
+                            TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, builder.Length - builderOffset);
+                            TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, count: builder.Length, leftIndent: TerminalPromt.Length);
+                            builder = builder.Remove(builderOffset - 1, 1);
+                            _writer.RenderBareText(builder.ToString(), newLine: false);
+                            TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, builder.Length - builderOffset + 1);
                         }
                     }
                     else if (key.Key == ConsoleKey.Enter)
