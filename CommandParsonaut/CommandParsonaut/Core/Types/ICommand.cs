@@ -3,7 +3,7 @@ namespace CommandParsonaut.Core.Types
 {
     public interface ICommand
     {
-        Action<IList<ParameterResult>> Worker { get; }
+        CommandWorker Worker { get; }
         string Description { get; }
         IList<(double min, double max)> DoubleRanges { get; }
         IList<IList<string>> Enums { get; }

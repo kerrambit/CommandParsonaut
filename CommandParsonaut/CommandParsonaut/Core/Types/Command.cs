@@ -1,15 +1,11 @@
-﻿
-using ParameterResults = System.Collections.Generic.IList<CommandParsonaut.Core.Types.ParameterResult>;
-
-namespace CommandParsonaut.Core.Types
+﻿namespace CommandParsonaut.Core.Types
 {
     ///// <summary>
     ///// Encapsulates basic data about the command, such as name, parameters etc.
     ///// </summary>
     public class Command : ICommand
     {
-        public Action<IList<ParameterResult>> Worker { get; protected set; }
-
+        public CommandWorker Worker { get; protected set; }
         public string Name { get; } = string.Empty;
         public string ParametersInStrinFormat { get; } = string.Empty;
         public string Description { get; } = string.Empty;
@@ -18,14 +14,17 @@ namespace CommandParsonaut.Core.Types
         public IList<(int min, int max)> IntegerRanges { get; } = new List<(int, int)>();
         public IList<(double min, double max)> DoubleRanges { get; } = new List<(double, double)>();
 
-        public Command(Action<IList<ParameterResult>> worker)
+        public Command(CommandWorker worker, string name, string parametersInStringFormat, string description)
         {
+            Name = name;
+            ParametersInStrinFormat = parametersInStringFormat;
+            Description = description;
             Worker = worker;
         }
 
         public Command(Action<IList<ParameterResult>> worker, string name, string parametersInStringFormat, string description)
         {
-            Worker = worker;
+            Worker = new CommandWorker(worker);
             Name = name;
             ParametersInStrinFormat = parametersInStringFormat;
             Description = description;
@@ -33,7 +32,16 @@ namespace CommandParsonaut.Core.Types
 
         public Command(Action<IList<ParameterResult>> worker, string name, string parametersInStringFormat, string description, IList<ParameterType> parameters)
         {
-            Worker = worker;
+            Worker = new CommandWorker(worker);
+            Name = name;
+            ParametersInStrinFormat = parametersInStringFormat;
+            Description = description;
+            Parameters = parameters;
+        }
+
+        public Command(Func<IList<ParameterResult>, Task> asyncWorker, string name, string parametersInStringFormat, string description, IList<ParameterType> parameters)
+        {
+            Worker = new CommandWorker(asyncWorker);
             Name = name;
             ParametersInStrinFormat = parametersInStringFormat;
             Description = description;
@@ -42,7 +50,7 @@ namespace CommandParsonaut.Core.Types
 
         public Command(Action<IList<ParameterResult>> worker, string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<(int min, int max)> integerRanges)
         {
-            Worker = worker;
+            Worker = new CommandWorker(worker);
             Name = name;
             ParametersInStrinFormat = parametersInStringFormat;
             Description = description;
@@ -53,7 +61,7 @@ namespace CommandParsonaut.Core.Types
         public Command(Action<IList<ParameterResult>> worker, string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<(double min, double max)> doubleRanges)
         {
 
-            Worker = worker;
+            Worker = new CommandWorker(worker);
             Name = name;
             ParametersInStrinFormat = parametersInStringFormat;
             Description = description;
@@ -63,7 +71,7 @@ namespace CommandParsonaut.Core.Types
 
         public Command(Action<IList<ParameterResult>> worker, string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<IList<string>> enums)
         {
-            Worker = worker;
+            Worker = new CommandWorker(worker);
             Name = name;
             ParametersInStrinFormat = parametersInStringFormat;
             Description = description;
@@ -73,7 +81,7 @@ namespace CommandParsonaut.Core.Types
 
         public Command(Action<IList<ParameterResult>> worker, string name, string parametersInStringFormat, string description, IList<ParameterType> parameters, IList<(int min, int max)> integerRanges, IList<IList<string>> enums)
         {
-            Worker = worker;
+            Worker = new CommandWorker(worker);
             Name = name;
             ParametersInStrinFormat = parametersInStringFormat;
             Description = description;

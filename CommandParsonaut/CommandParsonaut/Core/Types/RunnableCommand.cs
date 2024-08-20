@@ -11,9 +11,16 @@ namespace CommandParsonaut.Core.Types
             _results = results;
         }
 
-        public void Execute()
+        public async void Execute()
         {
-            Worker(_results);
+            if (Worker.IsAsync)
+            {
+                await Worker.GetAsyncWorker().Invoke(_results);
+            }
+            else
+            {
+                Worker.GetWorker().Invoke(_results);
+            }
         }
     }
 }

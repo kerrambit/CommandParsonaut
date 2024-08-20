@@ -61,6 +61,15 @@ namespace RSSFeedifyCLIClient.Repository
                 "",
                 "Will run password reader."));
 
+            commands.Add(new Command(
+                async (parameters) =>
+                {
+                    writer.RenderBareText("Async work... Work will finish in the background.");
+                    await Task.Delay(3000);
+                },
+                "async",
+                string.Empty,
+                "Simulates async work."));
 
             return commands;
         }

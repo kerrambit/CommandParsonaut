@@ -1,8 +1,6 @@
 ﻿using CommandParsonaut.Core;
 using CommandParsonaut.Core.Types;
 using CommandParsonaut.Interfaces;
-using CommandParsonaut.OtherToolkit;
-using Example;
 using RSSFeedifyCLIClient.IO;
 using RSSFeedifyCLIClient.Repository;
 
