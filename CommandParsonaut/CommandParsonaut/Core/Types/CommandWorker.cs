@@ -1,10 +1,12 @@
 ﻿namespace CommandParsonaut.Core.Types
 {
+    /// <summary>
+    /// Class encapsulates type of delegate that can be used to define worker inside ICommand.
+    /// </summary>
     public class CommandWorker
     {
         private Action<IList<ParameterResult>> _worker { get; } = null;
         private Func<IList<ParameterResult>, Task> _asyncWorker { get; } = null;
-
         public bool IsAsync { get; }
 
         public CommandWorker(Action<IList<ParameterResult>> worker)

@@ -2,6 +2,11 @@
 
 namespace CommandParsonaut.Core.Types
 {
+    /// <summary>
+    /// Special result object is returned that contains the success or failure of an operation as well as error information or success value. 
+    /// </summary>
+    /// <typeparam name="TValue">Success value</typeparam>
+    /// <typeparam name="TErrorValue">Error value</typeparam>
     public class Result<TValue, TErrorValue>
     {
         [NotNull]

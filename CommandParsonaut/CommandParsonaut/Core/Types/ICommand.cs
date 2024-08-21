@@ -1,6 +1,9 @@
 ﻿
 namespace CommandParsonaut.Core.Types
 {
+    /// <summary>
+    /// ICommand definies interface to define classes holding basic data about the command.
+    /// </summary>
     public interface ICommand
     {
         CommandWorker Worker { get; }

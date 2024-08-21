@@ -1,6 +1,10 @@
 ﻿
 namespace CommandParsonaut.Core.Types
 {
+    /// <summary>
+    /// This class implements IRunnableCommand interface, which means that is ready to be executed.
+    /// It needs to have a list of parsed parameters and the given command.
+    /// </summary>
     public class RunnableCommand : Command, IRunnableCommand
     {
         private IList<ParameterResult> _results;
