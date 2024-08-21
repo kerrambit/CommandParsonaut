@@ -2,6 +2,9 @@
 
 namespace CommandParsonaut.OtherToolkit
 {
+    /// <summary>
+    /// This class enables to read passwords.
+    /// </summary>
     public class PasswordReader
     {
         private readonly IReader _reader;

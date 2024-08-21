@@ -13,13 +13,27 @@ namespace CommandParsonaut.Core
     {
         private IWriter _writer;
         private IReader _reader;
-        private List<Command> _commands = new List<Command>();
+        private List<ICommand> _commands = new List<ICommand>();
         private int _maxCommandArgumentLength = 0;
-        private IList<string> _commandsHistory = new List<string>();
-        private int _currentCommandsHistoryOffset = -1;
+        
+        private TerminalHistory _terminalHistory = new();
 
         public event EventHandler<string>? InputGiven;
         public readonly string TerminalPromt = ">>> ";
+
+        public struct CommandParserData
+        {
+            public ICommand Command;
+            public IList<ParameterResult> Results;
+            public string RawInput;
+
+            public CommandParserData(ICommand command, IList<ParameterResult> results, string rawInput)
+            {
+                Command = command;
+                Results = results;
+                RawInput = rawInput;
+            }
+        }
 
         public CommandParser(IWriter writer, IReader reader)
         {
@@ -27,7 +41,7 @@ namespace CommandParsonaut.Core
             _reader = reader;
         }
 
-        public void AddCommands(IList<Command> commands)
+        public void AddCommands(IList<ICommand> commands)
         {
             foreach (var command in commands)
             {
@@ -35,7 +49,7 @@ namespace CommandParsonaut.Core
             }
         }
 
-        private void AddCommand(Command command)
+        public void AddCommand(ICommand command)
         {
             _commands.Add(command);
             if (command.Name.Length + command.ParametersInStrinFormat.Length > _maxCommandArgumentLength)
@@ -79,28 +93,24 @@ namespace CommandParsonaut.Core
                     }
                     else if (key.Key == ConsoleKey.UpArrow)
                     {
-                        if (_currentCommandsHistoryOffset > 0 && _currentCommandsHistoryOffset <= _commandsHistory.Count)
+                        var result = _terminalHistory.BackInHistory();
+                        if (result.IsSuccess)
                         {
-                            _currentCommandsHistoryOffset--;
-                            string commandFromHistory = _commandsHistory[_currentCommandsHistoryOffset];
-                            ReplaceCurrentLineWithCommand(builder, commandFromHistory);
+                            ReplaceCurrentLineWithCommand(builder, result.GetValue);
                         }
                     }
                     else if (key.Key == ConsoleKey.DownArrow)
                     {
-                        if (_currentCommandsHistoryOffset >= 0)
+                        var result = _terminalHistory.ForwardInHistory();
+                        if (result.IsSuccess)
                         {
-                            if (_currentCommandsHistoryOffset >= _commandsHistory.Count - 1)
+                            ReplaceCurrentLineWithCommand(builder, result.GetValue);
+                        } else
+                        {
+                            if (result.GetError == TerminalHistory.ForwardInHistorySuccess.BackAtTheBeginning)
                             {
                                 TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, builder.Length);
                                 builder.Length = 0;
-                                _currentCommandsHistoryOffset = _commandsHistory.Count;
-                            }
-                            else
-                            {
-                                _currentCommandsHistoryOffset++;
-                                string commandFromHistory = _commandsHistory[_currentCommandsHistoryOffset];
-                                ReplaceCurrentLineWithCommand(builder, commandFromHistory);
                             }
                         }
                     }
@@ -130,8 +140,7 @@ namespace CommandParsonaut.Core
                         _writer.RenderBareText("");
                         if (input.Length > 0)
                         {
-                            _commandsHistory.Add(input);
-                            _currentCommandsHistoryOffset = _commandsHistory.Count;
+                            _terminalHistory.Add(input);
                         }
                         return true;
                     }
@@ -150,17 +159,14 @@ namespace CommandParsonaut.Core
             }
         }
 
-        public bool GetCommand(out Command receivedCommand, out IList<ParameterResult> results, out string unprocessedInput)
+        public Result<CommandParserData, string> GetCommand()
         {
             RenderTerminalPrompt();
 
             string input;
             if (!GetUnprocessedInput(out input))
             {
-                receivedCommand = new();
-                results = [];
-                unprocessedInput = input;
-                return false;
+                return Result.Error<CommandParserData, string>("Unable to read input.");
             }
 
             if (InputGiven is not null)
@@ -173,45 +179,40 @@ namespace CommandParsonaut.Core
             if (tokens.Length <= 0)
             {
                 RenderEmptyCommandMessage();
-                receivedCommand = new();
-                results = [];
-                unprocessedInput = input;
-                return false;
+                return Result.Error<CommandParserData, string>("Empty input.");
             }
 
             foreach (var command in _commands)
             {
                 if (tokens[0].Equals(command.Name.ToUpper()) || tokens[0].Equals(command.Name.ToLower()) || tokens[0].Equals("help"))
                 {
-                    unprocessedInput = input;
-                    receivedCommand = command;
+                    CommandParserData commandParserData = new CommandParserData();
+                    commandParserData.RawInput = input;
+                    commandParserData.Command = command;
 
                     if (tokens[0] == "help")
                     {
                         RenderHelp();
-                        results = new List<ParameterResult>();
-                        return false;
+                        commandParserData.Results = new List<ParameterResult>();
+                        return Result.Error<CommandParserData, string>("Help command was entered.");
                     }
 
                     string error;
-                    if (!CheckCommandParameters(command, tokens, out error, out results))
+                    if (!CheckCommandParameters(command, tokens, out error, out commandParserData.Results))
                     {
                         _writer.RenderErrorMessage(error);
-                        return false;
+                        return Result.Error<CommandParserData, string>(error);
                     }
 
-                    return true;
+                    return Result.Ok<CommandParserData, string>(commandParserData);
                 }
             }
 
             RenderUnknownCommandMessage(in input);
-            receivedCommand = new();
-            results = [];
-            unprocessedInput = input;
-            return false;
+            return Result.Error<CommandParserData, string>($"Unknown command '{input}'.");
         }
 
-        public static bool CheckCommandParameters(Command command, string[] tokens, out string error, out IList<ParameterResult> results)
+        public static bool CheckCommandParameters(ICommand command, string[] tokens, out string error, out IList<ParameterResult> results)
         {
             error = string.Empty;
             if (command.Parameters.Count != tokens.Length - 1)
