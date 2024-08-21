@@ -15,8 +15,8 @@ namespace CommandParsonaut.Core
         private IReader _reader;
         private List<ICommand> _commands = new List<ICommand>();
         private int _maxCommandArgumentLength = 0;
-        private IList<string> _commandsHistory = new List<string>();
-        private int _currentCommandsHistoryOffset = -1;
+        
+        private TerminalHistory _terminalHistory = new();
 
         public event EventHandler<string>? InputGiven;
         public readonly string TerminalPromt = ">>> ";
@@ -93,28 +93,24 @@ namespace CommandParsonaut.Core
                     }
                     else if (key.Key == ConsoleKey.UpArrow)
                     {
-                        if (_currentCommandsHistoryOffset > 0 && _currentCommandsHistoryOffset <= _commandsHistory.Count)
+                        var result = _terminalHistory.BackInHistory();
+                        if (result.IsSuccess)
                         {
-                            _currentCommandsHistoryOffset--;
-                            string commandFromHistory = _commandsHistory[_currentCommandsHistoryOffset];
-                            ReplaceCurrentLineWithCommand(builder, commandFromHistory);
+                            ReplaceCurrentLineWithCommand(builder, result.GetValue);
                         }
                     }
                     else if (key.Key == ConsoleKey.DownArrow)
                     {
-                        if (_currentCommandsHistoryOffset >= 0)
+                        var result = _terminalHistory.ForwardInHistory();
+                        if (result.IsSuccess)
                         {
-                            if (_currentCommandsHistoryOffset >= _commandsHistory.Count - 1)
+                            ReplaceCurrentLineWithCommand(builder, result.GetValue);
+                        } else
+                        {
+                            if (result.GetError == TerminalHistory.ForwardInHistorySuccess.BackAtTheBeginning)
                             {
                                 TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, builder.Length);
                                 builder.Length = 0;
-                                _currentCommandsHistoryOffset = _commandsHistory.Count;
-                            }
-                            else
-                            {
-                                _currentCommandsHistoryOffset++;
-                                string commandFromHistory = _commandsHistory[_currentCommandsHistoryOffset];
-                                ReplaceCurrentLineWithCommand(builder, commandFromHistory);
                             }
                         }
                     }
@@ -144,8 +140,7 @@ namespace CommandParsonaut.Core
                         _writer.RenderBareText("");
                         if (input.Length > 0)
                         {
-                            _commandsHistory.Add(input);
-                            _currentCommandsHistoryOffset = _commandsHistory.Count;
+                            _terminalHistory.Add(input);
                         }
                         return true;
                     }
