@@ -17,7 +17,7 @@
         {
             return $"Command '{Name}': '{Description}'";
         }
-        
+
         public Command() { }
 
         public Command(string name, string parametersInStringFormat, string description)

@@ -172,7 +172,7 @@ namespace CommandParsonaut.Core
                 receivedCommand = new();
                 results = [];
                 unprocessedInput = input;
-                return false;        
+                return false;
             }
             stringBuilder.Append($"RawInput: <{input}>");
 
@@ -220,7 +220,7 @@ namespace CommandParsonaut.Core
                         return false;
                     }
 
-                    stringBuilder.Append($"; CommandArguments: <{string.Join(", ", commandParserData.Results)}>");
+                    stringBuilder.Append($"; CommandArguments: <{string.Join(", ", results)}>");
                     stringBuilder.Append($". GetCommand() result: [SUCCESS] - parsing of the command's arguments was successfull.");
                     InvokeEventHandler(stringBuilder);
                     return true;
