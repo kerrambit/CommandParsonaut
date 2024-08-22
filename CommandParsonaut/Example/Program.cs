@@ -22,6 +22,14 @@ namespace RSSFeedifyCLIClient
             var parser = new CommandParser(writer, reader);
             parser.AddCommands(commands.Values.ToList());
 
+            parser.InputGiven += (sender, data) =>
+            {
+                var originalColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(data);
+                Console.ForegroundColor = originalColor;
+            };
+
             bool appRunning = true;
             while (appRunning)
             {

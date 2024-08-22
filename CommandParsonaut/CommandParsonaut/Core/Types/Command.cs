@@ -13,6 +13,11 @@
         public IList<(int min, int max)> IntegerRanges { get; } = new List<(int, int)>();
         public IList<(double min, double max)> DoubleRanges { get; } = new List<(double, double)>();
 
+        public override string ToString()
+        {
+            return $"Command '{Name}': '{Description}'";
+        }
+
         public Command() { }
 
         public Command(string name, string parametersInStringFormat, string description)
