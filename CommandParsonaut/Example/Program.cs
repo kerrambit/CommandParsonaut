@@ -25,6 +25,14 @@ namespace RSSFeedifyCLIClient
             bool appRunning = true;
             parser.AddCommand(new Command((IList<ParameterResult> list) => { appRunning = false; }, "quit", "", "Quits the application.", new List<ParameterType> { }));
 
+            parser.InputGiven += (sender, data) =>
+            {
+                var originalColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine(data);
+                Console.ForegroundColor = originalColor;
+            };
+
             while (appRunning)
             {
                 var result = parser.GetCommand();

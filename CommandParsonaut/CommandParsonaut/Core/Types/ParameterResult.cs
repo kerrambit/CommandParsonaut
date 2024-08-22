@@ -67,5 +67,33 @@
         {
             return _availableType.isAvailable && _availableType.Type == targetType;
         }
+
+        private string GetAvailableValueAsString()
+        {
+            switch (_availableType.Type)
+            {
+                case ParameterType.Integer:
+                case ParameterType.IntegerRange:
+                    return $"{Integer}";
+                case ParameterType.Double:
+                case ParameterType.DoubleRange:
+                    return $"{Double}";
+                case ParameterType.String:
+                    return $"{String}";
+                case ParameterType.Enum:
+                    return $"{Enum}";
+                case ParameterType.Uri:
+                    return $"{Uri}";
+                case ParameterType.Email:
+                    return $"{Email}";
+                default:
+                    return "";
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"ParameterResult: type: '{_availableType.Type}', value: '{GetAvailableValueAsString()}'";
+        }
     }
 }
