@@ -20,6 +20,7 @@ namespace CommandParsonaut.Core
 
         public event EventHandler<string>? InputGiven;
         public readonly string TerminalPromt = ">>> ";
+        public readonly string Tab = "    ";
 
         public CommandParser(IWriter writer, IReader reader)
         {
@@ -68,6 +69,10 @@ namespace CommandParsonaut.Core
                     {
                         _writer.ClearTerminal();
                         RenderTerminalPrompt();
+                    }
+                    else if (key.Key == ConsoleKey.Tab)
+                    {
+                        EnterNewKey(builder, Tab);
                     }
                     else if (key.Key == ConsoleKey.End)
                     {
@@ -137,17 +142,34 @@ namespace CommandParsonaut.Core
                     }
                     else
                     {
-                        int builderOffset = _reader.GetCursorLeftPosition() - TerminalPromt.Length;
-                        builder = builder.Insert(builderOffset, key.KeyChar);
-
-                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, builder.Length - builderOffset);
-                        TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, count: builder.Length, leftIndent: TerminalPromt.Length);
-                        _writer.RenderBareText(builder.ToString(), newLine: false);
-
-                        TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, builder.Length - builderOffset - 1);
+                        EnterNewKey(builder, key);
                     }
                 }
             }
+        }
+
+        private void EnterNewKey(StringBuilder builder, ConsoleKeyInfo key)
+        {
+            int builderOffset = _reader.GetCursorLeftPosition() - TerminalPromt.Length;
+            builder = builder.Insert(builderOffset, key.KeyChar);
+
+            TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, builder.Length - builderOffset);
+            TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, count: builder.Length, leftIndent: TerminalPromt.Length);
+            _writer.RenderBareText(builder.ToString(), newLine: false);
+
+            TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, builder.Length - builderOffset - 1);
+        }
+
+        private void EnterNewKey(StringBuilder builder, string data)
+        {
+            int builderOffset = _reader.GetCursorLeftPosition() - TerminalPromt.Length;
+            builder = builder.Insert(builderOffset, data);
+
+            TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, builder.Length - builderOffset);
+            TerminalBasicAbilities.ExecuteBackspace(_reader, _writer, count: builder.Length, leftIndent: TerminalPromt.Length);
+            _writer.RenderBareText(builder.ToString(), newLine: false);
+
+            TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Left, builder.Length - builderOffset - data.Length);
         }
 
         private void InvokeEventHandler(StringBuilder stringBuilder)
