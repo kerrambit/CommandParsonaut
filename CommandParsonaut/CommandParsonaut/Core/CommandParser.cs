@@ -150,34 +150,47 @@ namespace CommandParsonaut.Core
             }
         }
 
+        private void InvokeEventHandler(StringBuilder stringBuilder)
+        {
+            if (InputGiven is not null)
+            {
+                InputGiven.Invoke(this, stringBuilder.ToString());
+            }
+        }
+
         public bool GetCommand(out Command receivedCommand, out IList<ParameterResult> results, out string unprocessedInput)
         {
             RenderTerminalPrompt();
+            StringBuilder stringBuilder = new StringBuilder();
 
             string input;
             if (!GetUnprocessedInput(out input))
             {
+                stringBuilder.Append($"RawInput: <{input}>. GetCommand() result: [ERROR] - unable to read input.");
+                InvokeEventHandler(stringBuilder);
+
                 receivedCommand = new();
                 results = [];
                 unprocessedInput = input;
-                return false;
+                return false;        
             }
-
-            if (InputGiven is not null)
-            {
-                InputGiven.Invoke(this, input);
-            }
+            stringBuilder.Append($"RawInput: <{input}>");
 
             input = input.Trim();
             string[] tokens = InputParser.SplitInput(input, true);
             if (tokens.Length <= 0)
             {
+                stringBuilder.Append($". GetCommand() result: [ERROR] - empty input.");
+                InvokeEventHandler(stringBuilder);
                 RenderEmptyCommandMessage();
+
                 receivedCommand = new();
                 results = [];
                 unprocessedInput = input;
                 return false;
             }
+            stringBuilder.Append($"; Tokens: [{string.Join(", ", tokens.Select(token => $"<{token}>"))}]");
+            stringBuilder.Append($"; CommandToken: <{tokens[0]}>");
 
             foreach (var command in _commands)
             {
@@ -188,23 +201,36 @@ namespace CommandParsonaut.Core
 
                     if (tokens[0] == "help")
                     {
+                        stringBuilder.Append($". GetCommand() result: [WARNING] - Help command was entered.");
+                        InvokeEventHandler(stringBuilder);
                         RenderHelp();
+
                         results = new List<ParameterResult>();
                         return false;
                     }
+
+                    stringBuilder.Append($"; CommandToken identified with Command: <{command.ToString()}>");
 
                     string error;
                     if (!CheckCommandParameters(command, tokens, out error, out results))
                     {
                         _writer.RenderErrorMessage(error);
+                        stringBuilder.Append($". GetCommand() result: [ERROR] - parsing of arguments ended with error. Detailed message: '{error}'");
+                        InvokeEventHandler(stringBuilder);
                         return false;
                     }
 
+                    stringBuilder.Append($"; CommandArguments: <{string.Join(", ", commandParserData.Results)}>");
+                    stringBuilder.Append($". GetCommand() result: [SUCCESS] - parsing of the command's arguments was successfull.");
+                    InvokeEventHandler(stringBuilder);
                     return true;
                 }
             }
 
+            stringBuilder.Append($". GetCommand() result: [ERROR] - unknown command.");
+            InvokeEventHandler(stringBuilder);
             RenderUnknownCommandMessage(in input);
+
             receivedCommand = new();
             results = [];
             unprocessedInput = input;
