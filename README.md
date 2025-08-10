@@ -18,4 +18,4 @@ For more details, visit the NuGet package page https://www.nuget.org/packages/Co
 To get started, refer to the *Example* project in the repository. It provides a comprehensive guide on how to use the library effectively in your projects.
 
 ## Changelog
-To see the history of the versions, check the link https://www.nuget.org/packages/CommandParsonaut/1.3.0#releasenotes-body-tab.
+To see the history of the versions, check the link https://www.nuget.org/packages/CommandParsonaut/2.0.0#releasenotes-body-tab.
