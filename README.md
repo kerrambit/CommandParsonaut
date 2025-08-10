@@ -1,4 +1,4 @@
-# CommandParsonaut 1.2.1
+# CommandParsonaut 2.0.0
 
 Simple C# terminal & commands parser tool.
 
@@ -10,7 +10,7 @@ CommandParsonaut allows you to easily set up your own terminal and define custom
 CommandParsonaut requires minimal setup. Simply add the library via the NuGet package manager:
 
 ```
-dotnet add package CommandParsonaut --version 1.2.1
+dotnet add package CommandParsonaut --version 2.0.0
 ```
 For more details, visit the NuGet package page https://www.nuget.org/packages/CommandParsonaut
 
