@@ -1,8 +1,8 @@
 ﻿namespace CommandParsonaut.Core.Types
 {
     /// <summary>
-    /// Stores one possible result at the moment. User should ask which data is accessible or if the user knows
-    /// that e.g. command was parsed successfully, can query the right data right away.
+    /// Stores one possible result at the moment. User should ask which data is accessible or, if the user knows
+    /// that command was parsed successfully, can query the data right away.
     /// </summary>
     public class ParameterResult
     {

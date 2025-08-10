@@ -2,6 +2,9 @@
 
 namespace CommandParsonaut.OtherToolkit
 {
+    /// <summary>
+    /// This class offers basic methods for an easier work with a terminal.
+    /// </summary>
     public static class TerminalBasicAbilities
     {
         public static void ExecuteBackspace(IReader reader, IWriter writer, int count = 1, int leftIndent = 0)
