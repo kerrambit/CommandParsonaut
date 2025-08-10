@@ -20,6 +20,7 @@ namespace CommandParsonaut.Core
 
 		public event EventHandler<string>? InputGiven;
 		public readonly string TerminalPromt = ">>> ";
+		private readonly string Tab = "    ";
 
 		public struct CommandParserData
 		{
@@ -85,11 +86,18 @@ namespace CommandParsonaut.Core
 					}
 					else if (key.Key == ConsoleKey.Tab)
 					{
-						EnterNewKey(builder, Tab);
+						if (_reader.GetCursorLeftPosition() + 1 < Console.WindowWidth)
+						{
+							EnterNewKey(builder, Tab);
+						}
 					}
 					else if (key.Key == ConsoleKey.End)
 					{
 						TerminalBasicAbilities.ExecuteCarriageReturnBackwards(_reader, TerminalPromt.Length + builder.Length);
+					}
+					else if (key.Key == ConsoleKey.PageDown || key.Key == ConsoleKey.PageUp)
+					{
+						continue;
 					}
 					else if (key.Key == ConsoleKey.Home)
 					{
@@ -129,7 +137,7 @@ namespace CommandParsonaut.Core
 					}
 					else if (key.Key == ConsoleKey.Backspace)
 					{
-						if (builder.Length > 0)
+						if (builder.Length > 0 && (_reader.GetCursorLeftPosition() - TerminalPromt.Length) > 0)
 						{
 							int builderOffset = _reader.GetCursorLeftPosition() - TerminalPromt.Length;
 							TerminalBasicAbilities.ExecuteCursorMovemenet(_reader, TerminalBasicAbilities.CursorMovementDirection.Right, builder.Length - builderOffset);
@@ -151,7 +159,10 @@ namespace CommandParsonaut.Core
 					}
 					else
 					{
-						EnterNewKey(builder, key);
+						if (_reader.GetCursorLeftPosition() + 1 < Console.WindowWidth)
+						{
+							EnterNewKey(builder, key);
+						}
 					}
 				}
 			}
@@ -198,23 +209,23 @@ namespace CommandParsonaut.Core
 			string input;
 			if (!GetUnprocessedInput(out input))
 			{
-				stringBuilder.Append($"RawInput: <{input}>. GetCommand() result: [ERROR] - unable to read input.");
+				// stringBuilder.Append($"RawInput: <{input}>. GetCommand() result: [ERROR] - unable to read input.");
 				InvokeEventHandler(stringBuilder);
 				return Result.Error<CommandParserData, string>("Unable to read input.");
 			}
-			stringBuilder.Append($"RawInput: <{input}>");
+			// stringBuilder.Append($"RawInput: <{input}>");
 
 			input = input.Trim();
 			string[] tokens = InputParser.SplitInput(input, true);
 			if (tokens.Length <= 0)
 			{
 				RenderEmptyCommandMessage();
-				stringBuilder.Append($". GetCommand() result: [ERROR] - empty input.");
+				// stringBuilder.Append($". GetCommand() result: [ERROR] - empty input.");
 				InvokeEventHandler(stringBuilder);
 				return Result.Error<CommandParserData, string>("Empty input.");
 			}
-			stringBuilder.Append($"; Tokens: [{string.Join(", ", tokens.Select(token => $"<{token}>"))}]");
-			stringBuilder.Append($"; CommandToken: <{tokens[0]}>");
+			// stringBuilder.Append($"; Tokens: [{string.Join(", ", tokens.Select(token => $"<{token}>"))}]");
+			// stringBuilder.Append($"; CommandToken: <{tokens[0]}>");
 
 			foreach (var command in _commands)
 			{
@@ -227,32 +238,32 @@ namespace CommandParsonaut.Core
 					if (tokens[0] == "help")
 					{
 						RenderHelp();
-						stringBuilder.Append($". GetCommand() result: [WARNING] - Help command was entered.");
+						// stringBuilder.Append($". GetCommand() result: [WARNING] - Help command was entered.");
 						commandParserData.Results = new List<ParameterResult>();
 						InvokeEventHandler(stringBuilder);
 						return Result.Error<CommandParserData, string>("Help command was entered.");
 					}
 
-					stringBuilder.Append($"; CommandToken identified with Command: <{command.ToString()}>");
+					// stringBuilder.Append($"; CommandToken identified with Command: <{command.ToString()}>");
 
 					string error;
 					if (!CheckCommandParameters(command, tokens, out error, out commandParserData.Results))
 					{
 						_writer.RenderErrorMessage(error);
-						stringBuilder.Append($". GetCommand() result: [ERROR] - parsing of arguments ended with error. Detailed message: '{error}'");
+						// stringBuilder.Append($". GetCommand() result: [ERROR] - parsing of arguments ended with error. Detailed message: '{error}'");
 						InvokeEventHandler(stringBuilder);
 						return Result.Error<CommandParserData, string>(error);
 					}
 
-					stringBuilder.Append($"; CommandArguments: <{string.Join(", ", commandParserData.Results)}>");
-					stringBuilder.Append($". GetCommand() result: [SUCCESS] - parsing of the command's arguments was successfull.");
+					// stringBuilder.Append($"; CommandArguments: <{string.Join(", ", commandParserData.Results)}>");
+					// stringBuilder.Append($". GetCommand() result: [SUCCESS] - parsing of the command's arguments was successfull.");
 					InvokeEventHandler(stringBuilder);
 					return Result.Ok<CommandParserData, string>(commandParserData);
 				}
 			}
 
 			RenderUnknownCommandMessage(in input);
-			stringBuilder.Append($". GetCommand() result: [ERROR] - unknown command.");
+			// stringBuilder.Append($". GetCommand() result: [ERROR] - unknown command.");
 			InvokeEventHandler(stringBuilder);
 			return Result.Error<CommandParserData, string>($"Unknown command '{input}'.");
 		}
