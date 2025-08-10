@@ -11,13 +11,12 @@
     <Authors>kerrambit</Authors>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Version>1.2.1</Version>
+    <Version>2.0.0</Version>
     <PackageReleaseNotes>Overview:
 
-    FIX: the main parser class was still inside the old namespace which was a relict from the old "pre-project" before CommandParsonaut called CommandHewAwayTool
-    FIX: backspacing did not work correctly, fixed
-    FEATURE: add cursor movement using Arrow RIGHT/LEFT (needed the change of key appending implementation)
-    FEATURE: add HOME/END key shortcuts
+    FEATURE: terminal history
+    FEATURE: internal major changes, easier implementation of commands for users
+
 </PackageReleaseNotes>
   </PropertyGroup>
 
